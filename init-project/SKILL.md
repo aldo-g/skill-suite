@@ -28,10 +28,13 @@ This is purely `gh` CLI + git — no browser needed.
 ## Step 1: Pre-flight
 
 ```bash
-# Check gh CLI
-gh auth status 2>/dev/null && echo "GH_OK" || echo "GH_MISSING"
+# Locate gh CLI (may not be on default PATH in sandboxed environments)
+GH=$(which gh 2>/dev/null || ls /opt/homebrew/bin/gh /usr/local/bin/gh 2>/dev/null | head -1)
+[ -n "$GH" ] && echo "GH_PATH: $GH" || echo "GH_MISSING"
+# Check auth
+$GH auth status 2>/dev/null && echo "GH_OK" || echo "GH_MISSING"
 # Who is the authed user?
-gh api user --jq '.login' 2>/dev/null || echo "UNKNOWN_USER"
+$GH api user --jq '.login' 2>/dev/null || echo "UNKNOWN_USER"
 # Are we already in a git repo?
 git rev-parse --show-toplevel 2>/dev/null && echo "ALREADY_GIT" || echo "NOT_GIT"
 # What's in the current directory?
